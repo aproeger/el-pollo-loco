@@ -1,3 +1,8 @@
+let canvas, world;
+
 function init() {
-  // do something
+  canvas = document.getElementById("canvas");
+  world = new World(canvas);
+
+  console.log(world);
 }
