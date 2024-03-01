@@ -1,30 +1,52 @@
 class World {
   canvas;
   ctx;
+  keyboard;
+  cameraX = 0;
   character = new Character();
-  enemies = [new Chicken(), new Chicken(), new Chicken()];
-  clouds = [new Cloud()];
-  backgroundObjects = [
-    new BackgroundObject("img/5_background/layers/air.png"),
-    new BackgroundObject("img/5_background/layers/3_third_layer/1.png"),
-    new BackgroundObject("img/5_background/layers/2_second_layer/1.png"),
-    new BackgroundObject("img/5_background/layers/1_first_layer/1.png"),
-  ];
+  level = level1;
+  backgroundObjects = level1.backgroundObjects;
+  statusBar = new StatusBar();
 
-  constructor(canvas) {
+  constructor(canvas, keyboard) {
     this.canvas = canvas;
+    this.keyboard = keyboard;
     this.ctx = this.canvas.getContext("2d");
     this.draw();
+    this.setWorld();
+    this.checkCollisions();
+  }
+
+  setWorld() {
+    this.character.world = this;
+  }
+
+  checkCollisions() {
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+          this.character.hit();
+          this.statusBar.setPercentage(this.character.health);
+        }
+      });
+    }, 100);
   }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-    this.addObjectsToMap(this.backgroundObjects);
-    this.addObjectsToMap(this.clouds);
-    this.addObjectsToMap(this.enemies);
+    this.ctx.translate(this.cameraX, 0);
+    this.addObjectsToMap(this.level.backgroundObjects);
+    this.addObjectsToMap(this.level.clouds);
+
+    this.ctx.translate(-this.cameraX, 0);
+    this.addToMap(this.statusBar);
+    this.ctx.translate(this.cameraX, 0);
 
     this.addToMap(this.character);
+    this.addObjectsToMap(this.level.enemies);
+
+    this.ctx.translate(-this.cameraX, 0);
 
     requestAnimationFrame(() => {
       this.draw();
@@ -37,13 +59,31 @@ class World {
     });
   }
 
-  addToMap(MovableObject) {
-    this.ctx.drawImage(
-      MovableObject.img,
-      MovableObject.x,
-      MovableObject.y,
-      MovableObject.width,
-      MovableObject.height
-    );
+  addToMap(DrawableObject) {
+    if (DrawableObject.flipped) {
+      this.flipImage(DrawableObject);
+    }
+
+    DrawableObject.draw(this.ctx);
+
+    if (DrawableObject instanceof MovableObject) {
+      DrawableObject.drawFrame(this.ctx);
+    }
+
+    if (DrawableObject.flipped) {
+      this.flipImageBack(DrawableObject);
+    }
+  }
+
+  flipImage(DrawableObject) {
+    this.ctx.save();
+    this.ctx.translate(DrawableObject.width, 0);
+    this.ctx.scale(-1, 1);
+    DrawableObject.x = DrawableObject.x * -1;
+  }
+
+  flipImageBack(DrawableObject) {
+    DrawableObject.x = DrawableObject.x * -1;
+    this.ctx.restore();
   }
 }
