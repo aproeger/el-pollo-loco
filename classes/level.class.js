@@ -1,6 +1,5 @@
 class Level {
   levelEndX;
-  levelGround = 135;
   enemies;
   clouds;
   backgroundObjects;
