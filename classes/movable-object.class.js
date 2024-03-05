@@ -4,10 +4,9 @@ class MovableObject extends DrawableObject {
   acceleration = 2.5;
   health = 100;
   lastHit = 0;
-
-  constructor() {
-    super();
-  }
+  lastMove;
+  jumpPower = 30;
+  jumpFrameCount = 0;
 
   applyGravity() {
     setInterval(() => {
@@ -19,7 +18,7 @@ class MovableObject extends DrawableObject {
   }
 
   isAboveGround() {
-    return this.y < 135;
+    return this.y < 160;
   }
 
   drawFrame(ctx) {
@@ -34,14 +33,18 @@ class MovableObject extends DrawableObject {
 
   moveLeft() {
     this.x -= this.speed;
+    this.lastMove = new Date().getTime();
   }
 
   moveRight() {
     this.x += this.speed;
+    this.lastMove = new Date().getTime();
   }
 
   jump() {
-    this.speedY = 30;
+    this.speedY = this.jumpPower;
+    this.jumpFrameCount = 0;
+    this.lastMove = new Date().getTime();
   }
 
   hit() {
@@ -58,15 +61,13 @@ class MovableObject extends DrawableObject {
     return timePassed < 250;
   }
 
-  isDead() {
-    return this.health === 0;
+  isSleeping() {
+    let timePassed = new Date().getTime() - this.lastMove;
+    return timePassed > 5000;
   }
 
-  playAnimation(images) {
-    let i = this.currentImage % images.length;
-    let path = images[i];
-    this.image = this.imageCache[path];
-    this.currentImage++;
+  isDead() {
+    return this.health === 0;
   }
 
   isColliding(movableObject) {

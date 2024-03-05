@@ -4,11 +4,10 @@ class DrawableObject {
   width;
   height;
   image;
+  images;
   flipped = false;
   imageCache = {};
   currentImage = 0;
-
-  constructor() {}
 
   loadImage(path) {
     this.image = new Image();
@@ -21,6 +20,13 @@ class DrawableObject {
       image.src = path;
       this.imageCache[path] = image;
     });
+  }
+
+  playAnimation(images) {
+    let i = this.currentImage % images.length;
+    let path = images[i];
+    this.image = this.imageCache[path];
+    this.currentImage++;
   }
 
   draw(ctx) {
