@@ -1,11 +1,20 @@
 class Character extends MovableObject {
-  width = 150;
-  height = 295;
-  x = 100;
-  y = 135;
-  speed = 5;
   world;
-  sounds = { walking: new Audio("audio/walking1.mp3") };
+  width = 140;
+  height = 275;
+  x = 100;
+  y = 160;
+  speed = 5;
+  coins = 0;
+  bottles = 0;
+
+  sounds = {
+    walking: new Audio("audio/walking.mp3"),
+    jumping: new Audio("audio/jumping.mp3"),
+    collectCoin: new Audio("audio/collect-coin.mp3"),
+    collectBottle: new Audio("audio/collect-bottle.mp3"),
+    snoring: new Audio("audio/snoring.mp3"),
+  };
 
   IMAGES_IDLE = [
     "img/2_character_pepe/1_idle/idle/I-1.png",
@@ -20,6 +29,19 @@ class Character extends MovableObject {
     "img/2_character_pepe/1_idle/idle/I-10.png",
   ];
 
+  IMAGES_LONG_IDLE = [
+    "img/2_character_pepe/1_idle/long_idle/I-11.png",
+    "img/2_character_pepe/1_idle/long_idle/I-12.png",
+    "img/2_character_pepe/1_idle/long_idle/I-13.png",
+    "img/2_character_pepe/1_idle/long_idle/I-14.png",
+    "img/2_character_pepe/1_idle/long_idle/I-15.png",
+    "img/2_character_pepe/1_idle/long_idle/I-16.png",
+    "img/2_character_pepe/1_idle/long_idle/I-17.png",
+    "img/2_character_pepe/1_idle/long_idle/I-18.png",
+    "img/2_character_pepe/1_idle/long_idle/I-19.png",
+    "img/2_character_pepe/1_idle/long_idle/I-20.png",
+  ];
+
   IMAGES_WALK = [
     "img/2_character_pepe/2_walk/W-21.png",
     "img/2_character_pepe/2_walk/W-22.png",
@@ -30,7 +52,6 @@ class Character extends MovableObject {
   ];
 
   IMAGES_JUMP = [
-    "img/2_character_pepe/3_jump/J-31.png",
     "img/2_character_pepe/3_jump/J-32.png",
     "img/2_character_pepe/3_jump/J-33.png",
     "img/2_character_pepe/3_jump/J-34.png",
@@ -57,16 +78,19 @@ class Character extends MovableObject {
     "img/2_character_pepe/5_dead/D-57.png",
   ];
 
-  constructor() {
+  constructor(world) {
     super();
     this.loadImage(this.IMAGES_IDLE[0]);
     this.loadImages(this.IMAGES_IDLE);
+    this.loadImages(this.IMAGES_LONG_IDLE);
     this.loadImages(this.IMAGES_WALK);
     this.loadImages(this.IMAGES_JUMP);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
     this.applyGravity();
     this.animate();
+
+    this.world = world;
   }
 
   animate() {
@@ -77,13 +101,22 @@ class Character extends MovableObject {
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.flipped = true;
-        this.sounds.walking.play();
+        if (!this.isAboveGround()) {
+          this.sounds.walking.play();
+        }
       }
 
       if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
         this.moveRight();
         this.flipped = false;
-        this.sounds.walking.play();
+        if (!this.isAboveGround()) {
+          this.sounds.walking.play();
+        }
+      }
+
+      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
+        this.jump();
+        this.sounds.jumping.play();
       }
 
       this.world.cameraX = -this.x + 100;
@@ -96,21 +129,43 @@ class Character extends MovableObject {
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
-        this.playAnimation(this.IMAGES_JUMP);
+        if (this.jumpFrameCount < 4) {
+          this.playAnimation(this.IMAGES_JUMP.slice(0, 4));
+          this.jumpFrameCount++;
+        } else if (this.jumpFrameCount >= 4) {
+          this.playAnimation([this.IMAGES_JUMP[4]]);
+          this.jumpFrameCount++;
+        }
       } else if (
         (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) ||
         (this.world.keyboard.LEFT && this.x > 0)
       ) {
         this.playAnimation(this.IMAGES_WALK);
+      } else if (this.isSleeping()) {
+        this.playAnimation(this.IMAGES_LONG_IDLE);
       } else {
         this.playAnimation(this.IMAGES_IDLE);
       }
-
-      if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        this.jump(30);
-      }
-
-      //this.playAnimation(this.IMAGES_IDLE);
     }, 1000 / 10);
+  }
+
+  collectCoin() {
+    this.coins += 1;
+
+    if (this.coins > 5) {
+      this.coins = 5;
+    }
+
+    this.sounds.collectCoin.play();
+  }
+
+  collectBottle() {
+    this.bottles += 1;
+
+    if (this.bottles > 5) {
+      this.bottles = 5;
+    }
+
+    this.sounds.collectBottle.play();
   }
 }
