@@ -14,6 +14,10 @@ class MovableObject extends DrawableObject {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
       }
+
+      if (this.y > 160) {
+        this.y = 160;
+      }
     }, 1000 / 25);
   }
 
@@ -41,8 +45,10 @@ class MovableObject extends DrawableObject {
     this.lastMove = new Date().getTime();
   }
 
-  jump() {
-    this.speedY = this.jumpPower;
+  jump(jumpPower) {
+    if (!jumpPower) jumpPower = this.jumpPower;
+
+    this.speedY = jumpPower;
     this.jumpFrameCount = 0;
     this.lastMove = new Date().getTime();
   }
@@ -74,8 +80,12 @@ class MovableObject extends DrawableObject {
     return (
       this.x + this.width > movableObject.x &&
       this.y + this.height > movableObject.y &&
-      this.x < movableObject.x &&
+      this.x < movableObject.x + movableObject.width &&
       this.y < movableObject.y + movableObject.height
     );
+  }
+
+  isCollidingFromTop(movableObject) {
+    return this.isColliding(movableObject) && this.isAboveGround();
   }
 }

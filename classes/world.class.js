@@ -28,8 +28,12 @@ class World {
 
   checkCollisions() {
     setInterval(() => {
-      this.level.enemies.forEach((object) => {
-        if (this.character.isColliding(object)) {
+      this.level.enemies.forEach((object, index) => {
+        if (this.character.isCollidingFromTop(object)) {
+          console.log("colliding from top.");
+          this.level.enemies.splice(index, 1);
+          this.character.speedY = 15;
+        } else if (this.character.isColliding(object)) {
           this.character.hit();
           this.statusBarHealth.setPercentage(this.character.health);
         }
