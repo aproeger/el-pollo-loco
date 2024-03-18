@@ -1,19 +1,47 @@
-class Bottle extends CollectableObject {
+class Bottle extends ThrowableObject {
   height = 100;
   width = 100;
-  IMAGE = [
-    "img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
-    "img/6_salsa_bottle/2_salsa_bottle_on_ground.png",
+
+  IMAGES_ROTATION = [
+    "img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png",
+    "img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png",
+    "img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png",
+    "img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png",
+  ];
+
+  IMAGES_SPLASH = [
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png",
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png",
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png",
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png",
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png",
+    "img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
   constructor(x, y) {
     super();
 
-    let randomIndex = Math.round(Math.random());
+    this.loadImage(this.IMAGES_ROTATION[0]);
+    this.loadImages(this.IMAGES_ROTATION);
+    this.loadImages(this.IMAGES_SPLASH);
 
-    this.loadImage(this.IMAGE[randomIndex]);
+    this.x = x + 75;
+    this.y = y + 100;
+    this.throw();
+    this.animate();
+  }
 
-    this.x = x;
-    this.y = y;
+  animate() {
+    setInterval(() => {
+      if (!this.isSplashed()) {
+        this.playAnimation(this.IMAGES_ROTATION);
+      } else {
+        this.playAnimation(this.IMAGES_SPLASH);
+      }
+    }, 1000 / 10);
+  }
+
+  splash() {
+    this.splashed = true;
   }
 }
