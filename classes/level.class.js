@@ -4,6 +4,7 @@ class Level {
   clouds;
   backgroundObjects;
   collectableObjects;
+  throwableObjects = [];
 
   constructor(levelEndX, enemies, collectableObjects, clouds, backgroundObjects) {
     this.levelEndX = levelEndX;
