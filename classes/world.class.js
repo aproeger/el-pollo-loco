@@ -9,6 +9,7 @@ class World {
 
   sounds = {
     background: new Audio("audio/background-music.mp3"),
+    bottleSplash: new Audio("audio/bottle-splash.mp3"),
   };
 
   statusBarBottles = new StatusBarBottles();
@@ -22,39 +23,61 @@ class World {
     this.ctx = this.canvas.getContext("2d");
     this.draw();
     this.checkCollisions();
+    // this.playBackgroundMusic();
+  }
+
+  playBackgroundMusic() {
     this.sounds.background.volume = 0.3;
+    this.sounds.background.loop = true;
     this.sounds.background.play();
   }
 
   checkCollisions() {
     setInterval(() => {
-      this.level.enemies.forEach((object, index) => {
-        if (this.character.isCollidingFromTop(object)) {
-          console.log("colliding from top.");
-          this.level.enemies.splice(index, 1);
-          this.character.speedY = 15;
-        } else if (this.character.isColliding(object)) {
-          this.character.hit();
-          this.statusBarHealth.setPercentage(this.character.health);
+      this.level.enemies.forEach((enemy) => {
+        if (!enemy.isDead()) {
+          if (enemy instanceof Chicken && this.character.isCollidingFromTop(enemy)) {
+            enemy.hit(this.character.damage);
+            this.character.jump(15);
+          } else if (this.character.isColliding(enemy)) {
+            this.character.hit(enemy.damage);
+            this.statusBarHealth.setPercentage(this.character.health);
+          }
+
+          if (this.level.throwableObjects.length) {
+            this.level.throwableObjects.forEach((throwableObject, index) => {
+              if (!throwableObject.isSplashed() && enemy.isColliding(throwableObject)) {
+                throwableObject.splash();
+                enemy.hit(20);
+                this.sounds.bottleSplash.play();
+                setTimeout(() => {
+                  this.level.throwableObjects.splice(index, 1);
+                }, 300);
+
+                if (enemy instanceof Endboss) {
+                  this.statusBarEndboss.setPercentage(enemy.health);
+                }
+              }
+            });
+          }
         }
       });
 
       this.level.collectableObjects.forEach((object, index) => {
         if (this.character.isColliding(object)) {
           if (object instanceof Coin) {
-            console.log("coin collected");
-            this.character.collectCoin();
-            console.log("coins:", this.character.coins);
-            this.statusBarCoins.setPercentage(this.character.coins * 20);
+            if (this.statusBarCoins.percentage < 100) {
+              this.character.collectCoin();
+              this.level.collectableObjects.splice(index, 1);
+            }
           }
 
-          if (object instanceof Bottle) {
-            console.log("bottle collected");
-            this.character.collectBottle();
-            this.statusBarBottles.setPercentage(this.character.bottles * 20);
+          if (object instanceof BottleOnGround) {
+            if (this.statusBarBottles.percentage < 100) {
+              this.character.collectBottle();
+              this.level.collectableObjects.splice(index, 1);
+            }
           }
-
-          this.level.collectableObjects.splice(index, 1);
         }
       });
     }, 100);
@@ -75,8 +98,9 @@ class World {
     this.addToMap(this.statusBarEndboss);
     this.ctx.translate(this.cameraX, 0);
 
-    this.addToMap(this.character);
     this.addObjectsToMap(this.level.enemies);
+    this.addObjectsToMap(this.level.throwableObjects);
+    this.addToMap(this.character);
 
     this.ctx.translate(-this.cameraX, 0);
 
@@ -98,7 +122,10 @@ class World {
 
     DrawableObject.draw(this.ctx);
 
-    if (DrawableObject instanceof MovableObject && this.debug) {
+    if (
+      (DrawableObject instanceof MovableObject || DrawableObject instanceof CollectableObject) &&
+      this.debug
+    ) {
       DrawableObject.drawFrame(this.ctx);
     }
 
