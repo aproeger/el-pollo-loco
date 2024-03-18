@@ -7,6 +7,9 @@ class Character extends MovableObject {
   speed = 5;
   coins = 0;
   bottles = 0;
+  damage = 5;
+  lastThrow = 0;
+  offset = { x: { left: 20, right: 20 }, y: { top: 90, bottom: 10 } };
 
   sounds = {
     walking: new Audio("audio/walking.mp3"),
@@ -52,7 +55,6 @@ class Character extends MovableObject {
   ];
 
   IMAGES_JUMP = [
-    "img/2_character_pepe/3_jump/J-32.png",
     "img/2_character_pepe/3_jump/J-33.png",
     "img/2_character_pepe/3_jump/J-34.png",
     "img/2_character_pepe/3_jump/J-35.png",
@@ -97,6 +99,11 @@ class Character extends MovableObject {
     // 60 fps
     setInterval(() => {
       this.sounds.walking.pause();
+      this.sounds.snoring.pause();
+
+      if (this.isSleeping()) {
+        // this.sounds.snoring.play();
+      }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
@@ -119,6 +126,10 @@ class Character extends MovableObject {
         this.sounds.jumping.play();
       }
 
+      if (this.world.keyboard.D) {
+        this.throwBottle();
+      }
+
       this.world.cameraX = -this.x + 100;
     }, 1000 / 60);
 
@@ -129,11 +140,11 @@ class Character extends MovableObject {
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
       } else if (this.isAboveGround()) {
-        if (this.jumpFrameCount < 4) {
-          this.playAnimation(this.IMAGES_JUMP.slice(0, 4));
+        if (this.jumpFrameCount < 3) {
+          this.playAnimation(this.IMAGES_JUMP.slice(0, 3));
           this.jumpFrameCount++;
-        } else if (this.jumpFrameCount >= 4) {
-          this.playAnimation([this.IMAGES_JUMP[4]]);
+        } else if (this.jumpFrameCount >= 3) {
+          this.playAnimation([this.IMAGES_JUMP[3]]);
           this.jumpFrameCount++;
         }
       } else if (
@@ -156,6 +167,7 @@ class Character extends MovableObject {
       this.coins = 5;
     }
 
+    this.world.statusBarCoins.setPercentage(this.coins * 20);
     this.sounds.collectCoin.play();
   }
 
@@ -166,6 +178,19 @@ class Character extends MovableObject {
       this.bottles = 5;
     }
 
+    this.world.statusBarBottles.setPercentage(this.bottles * 20);
     this.sounds.collectBottle.play();
+  }
+
+  throwBottle() {
+    let currentTime = new Date().getTime();
+    let timePassed = currentTime - this.lastThrow;
+
+    if (this.bottles > 0 && timePassed > 1250) {
+      this.world.level.throwableObjects.push(new Bottle(this.x, this.y));
+      this.lastThrow = currentTime;
+      this.bottles -= 1;
+      this.world.statusBarBottles.setPercentage(this.bottles * 20);
+    }
   }
 }
