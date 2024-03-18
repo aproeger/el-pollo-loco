@@ -1,6 +1,7 @@
 class Coin extends CollectableObject {
   height = 125;
   width = 125;
+  offset = { x: { left: 40, right: 40 }, y: { top: 40, bottom: 40 } };
   IMAGES = ["img/8_coin/coin_1.png", "img/8_coin/coin_2.png"];
 
   constructor(x, y) {
