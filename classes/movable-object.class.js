@@ -7,6 +7,7 @@ class MovableObject extends DrawableObject {
   lastMove;
   jumpPower = 30;
   jumpFrameCount = 0;
+  damage = 0;
 
   applyGravity() {
     setInterval(() => {
@@ -15,23 +16,17 @@ class MovableObject extends DrawableObject {
         this.speedY -= this.acceleration;
       }
 
-      if (this.y > 160) {
+      if (this instanceof Character && this.y > 160) {
         this.y = 160;
       }
     }, 1000 / 25);
   }
 
   isAboveGround() {
-    return this.y < 160;
-  }
-
-  drawFrame(ctx) {
-    if (this instanceof Character || this instanceof Chicken || this instanceof Endboss) {
-      ctx.beginPath();
-      ctx.lineWidth = 5;
-      ctx.strokeStyle = "blue";
-      ctx.rect(this.x, this.y, this.width, this.height);
-      ctx.stroke();
+    if (this instanceof ThrowableObject) {
+      return true;
+    } else {
+      return this.y < 160;
     }
   }
 
@@ -53,8 +48,8 @@ class MovableObject extends DrawableObject {
     this.lastMove = new Date().getTime();
   }
 
-  hit() {
-    this.health -= 5;
+  hit(damage) {
+    this.health -= damage;
     if (this.health < 0) {
       this.health = 0;
     } else {
@@ -76,16 +71,16 @@ class MovableObject extends DrawableObject {
     return this.health === 0;
   }
 
-  isColliding(movableObject) {
+  isColliding(obj) {
     return (
-      this.x + this.width > movableObject.x &&
-      this.y + this.height > movableObject.y &&
-      this.x < movableObject.x + movableObject.width &&
-      this.y < movableObject.y + movableObject.height
+      this.x + this.width - this.offset.x.right > obj.x + obj.offset.x.left &&
+      this.y + this.height - this.offset.y.bottom > obj.y + obj.offset.y.top &&
+      this.x + this.offset.x.left < obj.x + obj.width - obj.offset.x.right &&
+      this.y + this.offset.y.top < obj.y + obj.height - obj.offset.y.bottom
     );
   }
 
-  isCollidingFromTop(movableObject) {
-    return this.isColliding(movableObject) && this.isAboveGround();
+  isCollidingFromTop(obj) {
+    return this.isColliding(obj) && this.isAboveGround();
   }
 }
