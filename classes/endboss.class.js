@@ -1,9 +1,13 @@
 class Endboss extends MovableObject {
   x = 3000;
   y = 50;
+  speed = 1;
   width = 323;
   height = 400;
   health = 100;
+  offset = { x: { left: 20, right: 10 }, y: { top: 75, bottom: 0 } };
+  activated = false;
+  damage = 20;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
@@ -54,17 +58,24 @@ class Endboss extends MovableObject {
     this.loadImages(this.IMAGES_ATTACK);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
+
+    addSound("sfx", "endbossHurt", new Audio("audio/endboss-hurt.mp3"));
+
     this.animate();
   }
 
+  activate() {
+    this.activated = true;
+  }
+
   animate() {
-    setInterval(() => {
-      if (!this.isDead()) {
-        //this.moveLeft();
+    setStoppableInterval(() => {
+      if (!this.isDead() && this.activated) {
+        this.moveLeft();
       }
     }, 1000 / 60);
 
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
       } else if (this.isHurt()) {

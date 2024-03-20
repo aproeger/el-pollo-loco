@@ -1,15 +1,11 @@
 class Chicken extends MovableObject {
   width = 77;
   height = 75;
-  x = 800 + Math.random() * 500;
+  x = 800 + Math.random() * 2000;
   y = 355;
   speed = 0.15 + Math.random() * 0.25;
   health = 5;
-  damage = 5;
-
-  sounds = {
-    alarm: new Audio("audio/chicken-alarm.mp3"),
-  };
+  damage = 10;
 
   IMAGES_WALKING = [
     "img/3_enemies_chicken/chicken_normal/1_walk/1_w.png",
@@ -28,13 +24,13 @@ class Chicken extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (!this.isDead()) {
         this.moveLeft();
       }
     }, 1000 / 60);
 
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (!this.isDead()) {
         this.playAnimation(this.IMAGES_WALKING);
       } else {
