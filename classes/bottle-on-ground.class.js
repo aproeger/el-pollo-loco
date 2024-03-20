@@ -11,7 +11,7 @@ class BottleOnGround extends CollectableObject {
     super();
     let randomIndex = Math.round(Math.random());
     this.loadImage(this.IMAGE[randomIndex]);
-    this.x = x;
-    this.y = y;
+    this.x = 500 + Math.random() * 2200;
+    this.y = 335;
   }
 }
