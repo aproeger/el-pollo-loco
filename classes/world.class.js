@@ -7,11 +7,6 @@ class World {
   level = level1;
   debug = true;
 
-  sounds = {
-    background: new Audio("audio/background-music.mp3"),
-    bottleSplash: new Audio("audio/bottle-splash.mp3"),
-  };
-
   statusBarBottles = new StatusBarBottles();
   statusBarHealth = new StatusBarHealth();
   statusBarCoins = new StatusBarCoins();
@@ -21,41 +16,94 @@ class World {
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.ctx = this.canvas.getContext("2d");
+
+    addSound("music", "background", new Audio("audio/music-background.mp3"));
+    addSound("music", "bossbattle", new Audio("audio/music-bossbattle.mp3"));
+    addSound("sfx", "bottleSplash", new Audio("audio/bottle-splash.mp3"));
+
     this.draw();
+    this.run();
+  }
+
+  run() {
+    this.playBackgroundMusic();
     this.checkCollisions();
-    // this.playBackgroundMusic();
+    this.checkGameStatus();
   }
 
   playBackgroundMusic() {
-    this.sounds.background.volume = 0.3;
-    this.sounds.background.loop = true;
-    this.sounds.background.play();
+    gameSounds.music.background.volume = 0.3;
+    gameSounds.music.background.loop = true;
+    gameSounds.music.background.play();
+  }
+
+  playBossbattleMusic() {
+    gameSounds.music.bossbattle.volume = 0.5;
+    gameSounds.music.bossbattle.loop = true;
+    gameSounds.music.bossbattle.play();
+  }
+
+  stopMusic() {
+    gameSounds.music.bossbattle.pause();
+    gameSounds.music.background.pause();
+  }
+
+  checkGameStatus() {
+    setStoppableInterval(() => {
+      if (!this.level.discoveredEndboss && this.character.x > this.level.levelEndX - 200) {
+        this.level.discoveredEndboss = true;
+        this.stopMusic();
+        this.playBossbattleMusic();
+        this.level.enemies.forEach((enemy) => {
+          if (enemy instanceof Endboss) enemy.activate();
+        });
+      }
+
+      if (this.level.discoveredEndboss) {
+        this.level.enemies.forEach((enemy) => {
+          if (enemy instanceof Endboss && enemy.isDead()) {
+            stopGame();
+          }
+        });
+      }
+
+      if (this.character.isDead()) {
+        stopGame();
+      }
+    }, 50);
   }
 
   checkCollisions() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       this.level.enemies.forEach((enemy) => {
         if (!enemy.isDead()) {
-          if (enemy instanceof Chicken && this.character.isCollidingFromTop(enemy)) {
+          if (
+            (enemy instanceof Chicken || enemy instanceof SmallChicken) &&
+            this.character.isCollidingFromTop(enemy)
+          ) {
             enemy.hit(this.character.damage);
             this.character.jump(15);
           } else if (this.character.isColliding(enemy)) {
-            this.character.hit(enemy.damage);
+            this.character.hit(enemy.damage, true);
+            gameSounds.sfx.hurt.play();
             this.statusBarHealth.setPercentage(this.character.health);
           }
 
           if (this.level.throwableObjects.length) {
             this.level.throwableObjects.forEach((throwableObject, index) => {
-              if (!throwableObject.isSplashed() && enemy.isColliding(throwableObject)) {
-                throwableObject.splash();
-                enemy.hit(20);
-                this.sounds.bottleSplash.play();
-                setTimeout(() => {
-                  this.level.throwableObjects.splice(index, 1);
-                }, 300);
+              if (!throwableObject.isSplashed()) {
+                if (!throwableObject.isAboveGround()) {
+                  throwableObject.splash();
+                  throwableObject.removeFromLevel(this.level, index);
+                } else if (enemy.isColliding(throwableObject)) {
+                  throwableObject.splash();
+                  enemy.hit(20);
+                  throwableObject.removeFromLevel(this.level, index);
 
-                if (enemy instanceof Endboss) {
-                  this.statusBarEndboss.setPercentage(enemy.health);
+                  if (enemy instanceof Endboss) {
+                    this.statusBarEndboss.setPercentage(enemy.health);
+                    gameSounds.sfx.endbossHurt.play();
+                  }
                 }
               }
             });
@@ -80,7 +128,7 @@ class World {
           }
         }
       });
-    }, 100);
+    }, 1000 / 60);
   }
 
   draw() {
