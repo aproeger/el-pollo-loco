@@ -1,11 +1,28 @@
 let canvas, world;
 let keyboard = new Keyboard();
+let intervalIds = [];
+let gameSounds = { music: {}, sfx: {} };
 
 function init() {
   canvas = document.getElementById("canvas");
-  world = new World(canvas, keyboard);
+  startGame();
+}
 
-  console.log(world);
+function startGame() {
+  world = new World(canvas, keyboard);
+}
+
+function stopGame() {
+  intervalIds.forEach(clearInterval);
+}
+
+function addSound(type, key, audio) {
+  gameSounds[type][key] = audio;
+}
+
+function setStoppableInterval(fn, time) {
+  let id = setInterval(fn, time);
+  intervalIds.push(id);
 }
 
 document.addEventListener("keydown", (event) => {
