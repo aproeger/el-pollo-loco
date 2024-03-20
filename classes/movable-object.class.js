@@ -7,27 +7,24 @@ class MovableObject extends DrawableObject {
   lastMove;
   jumpPower = 30;
   jumpFrameCount = 0;
+  frameCount = 0;
   damage = 0;
 
   applyGravity() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         this.y -= this.speedY;
         this.speedY -= this.acceleration;
       }
 
-      if (this instanceof Character && this.y > 160) {
-        this.y = 160;
+      if (this.y + this.height - this.offset.y.bottom > 425) {
+        this.y = 425 - this.height + this.offset.y.bottom;
       }
     }, 1000 / 25);
   }
 
   isAboveGround() {
-    if (this instanceof ThrowableObject) {
-      return true;
-    } else {
-      return this.y < 160;
-    }
+    return this.y + this.height - this.offset.y.bottom < 425;
   }
 
   moveLeft() {
@@ -48,18 +45,30 @@ class MovableObject extends DrawableObject {
     this.lastMove = new Date().getTime();
   }
 
-  hit(damage) {
+  hit(damage, pushback = false) {
     this.health -= damage;
+    if (pushback) this.pushBack();
     if (this.health < 0) {
       this.health = 0;
     } else {
       this.lastHit = new Date().getTime();
+      this.lastMove = new Date().getTime();
     }
+  }
+
+  pushBack() {
+    this.speedY = 15;
+    let interval = setInterval(() => {
+      this.x -= 6;
+    }, 1000 / 60);
+    setTimeout(() => {
+      clearInterval(interval);
+    }, 200);
   }
 
   isHurt() {
     let timePassed = new Date().getTime() - this.lastHit;
-    return timePassed < 250;
+    return timePassed < 500;
   }
 
   isSleeping() {
@@ -81,6 +90,8 @@ class MovableObject extends DrawableObject {
   }
 
   isCollidingFromTop(obj) {
-    return this.isColliding(obj) && this.isAboveGround();
+    return (
+      this.isColliding(obj) && this.y + this.height - this.offset.y.bottom < obj.y + obj.height / 2
+    );
   }
 }
