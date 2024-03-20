@@ -3,21 +3,13 @@ class Character extends MovableObject {
   width = 140;
   height = 275;
   x = 100;
-  y = 160;
+  y = 50;
   speed = 5;
   coins = 0;
   bottles = 0;
   damage = 5;
   lastThrow = 0;
   offset = { x: { left: 20, right: 20 }, y: { top: 90, bottom: 10 } };
-
-  sounds = {
-    walking: new Audio("audio/walking.mp3"),
-    jumping: new Audio("audio/jumping.mp3"),
-    collectCoin: new Audio("audio/collect-coin.mp3"),
-    collectBottle: new Audio("audio/collect-bottle.mp3"),
-    snoring: new Audio("audio/snoring.mp3"),
-  };
 
   IMAGES_IDLE = [
     "img/2_character_pepe/1_idle/idle/I-1.png",
@@ -89,6 +81,14 @@ class Character extends MovableObject {
     this.loadImages(this.IMAGES_JUMP);
     this.loadImages(this.IMAGES_HURT);
     this.loadImages(this.IMAGES_DEAD);
+
+    addSound("sfx", "walking", new Audio("audio/walking.mp3"));
+    addSound("sfx", "jumping", new Audio("audio/jumping.mp3"));
+    addSound("sfx", "hurt", new Audio("audio/hurt.mp3"));
+    addSound("sfx", "collectCoin", new Audio("audio/collect-coin.mp3"));
+    addSound("sfx", "collectBottle", new Audio("audio/collect-bottle.mp3"));
+    addSound("sfx", "snoring", new Audio("audio/snoring.mp3"));
+
     this.applyGravity();
     this.animate();
 
@@ -97,33 +97,33 @@ class Character extends MovableObject {
 
   animate() {
     // 60 fps
-    setInterval(() => {
-      this.sounds.walking.pause();
-      this.sounds.snoring.pause();
+    setStoppableInterval(() => {
+      gameSounds.sfx.walking.pause();
+      gameSounds.sfx.snoring.pause();
 
       if (this.isSleeping()) {
-        // this.sounds.snoring.play();
+        // gameSounds.sfx.snoring.play();
       }
 
-      if (this.world.keyboard.LEFT && this.x > 0) {
+      if (this.world.keyboard.LEFT && this.x > 0 && !this.isHurt()) {
         this.moveLeft();
         this.flipped = true;
         if (!this.isAboveGround()) {
-          this.sounds.walking.play();
+          gameSounds.sfx.walking.play();
         }
       }
 
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX) {
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.levelEndX && !this.isHurt()) {
         this.moveRight();
         this.flipped = false;
         if (!this.isAboveGround()) {
-          this.sounds.walking.play();
+          gameSounds.sfx.walking.play();
         }
       }
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
-        this.sounds.jumping.play();
+        gameSounds.sfx.jumping.play();
       }
 
       if (this.world.keyboard.D) {
@@ -134,7 +134,7 @@ class Character extends MovableObject {
     }, 1000 / 60);
 
     // 10 fps
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
       } else if (this.isHurt()) {
@@ -162,24 +162,14 @@ class Character extends MovableObject {
 
   collectCoin() {
     this.coins += 1;
-
-    if (this.coins > 5) {
-      this.coins = 5;
-    }
-
     this.world.statusBarCoins.setPercentage(this.coins * 20);
-    this.sounds.collectCoin.play();
+    gameSounds.sfx.collectCoin.play();
   }
 
   collectBottle() {
     this.bottles += 1;
-
-    if (this.bottles > 5) {
-      this.bottles = 5;
-    }
-
     this.world.statusBarBottles.setPercentage(this.bottles * 20);
-    this.sounds.collectBottle.play();
+    gameSounds.sfx.collectBottle.play();
   }
 
   throwBottle() {
@@ -187,7 +177,7 @@ class Character extends MovableObject {
     let timePassed = currentTime - this.lastThrow;
 
     if (this.bottles > 0 && timePassed > 1250) {
-      this.world.level.throwableObjects.push(new Bottle(this.x, this.y));
+      this.world.level.throwableObjects.push(new Bottle(this.x, this.y, this.flipped));
       this.lastThrow = currentTime;
       this.bottles -= 1;
       this.world.statusBarBottles.setPercentage(this.bottles * 20);

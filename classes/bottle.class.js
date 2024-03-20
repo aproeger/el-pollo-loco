@@ -18,21 +18,22 @@ class Bottle extends ThrowableObject {
     "img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png",
   ];
 
-  constructor(x, y) {
-    super();
+  constructor(x, y, flipped) {
+    super(flipped);
 
     this.loadImage(this.IMAGES_ROTATION[0]);
     this.loadImages(this.IMAGES_ROTATION);
     this.loadImages(this.IMAGES_SPLASH);
 
-    this.x = x + 75;
+    this.x = x + 25;
     this.y = y + 100;
+
     this.throw();
     this.animate();
   }
 
   animate() {
-    setInterval(() => {
+    setStoppableInterval(() => {
       if (!this.isSplashed()) {
         this.playAnimation(this.IMAGES_ROTATION);
       } else {
@@ -43,5 +44,6 @@ class Bottle extends ThrowableObject {
 
   splash() {
     this.splashed = true;
+    gameSounds.sfx.bottleSplash.play();
   }
 }
