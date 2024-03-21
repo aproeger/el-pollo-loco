@@ -5,8 +5,9 @@ class Endboss extends MovableObject {
   width = 323;
   height = 400;
   health = 100;
-  offset = { x: { left: 20, right: 10 }, y: { top: 75, bottom: 0 } };
-  activated = false;
+  offset = { x: { left: 20, right: 10 }, y: { top: 75, bottom: 15 } };
+  isActive = false;
+  isAttacking = false;
   damage = 20;
 
   IMAGES_WALKING = [
@@ -60,17 +61,21 @@ class Endboss extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
 
     addSound("sfx", "endbossHurt", new Audio("audio/endboss-hurt.mp3"));
-
-    this.animate();
   }
 
   activate() {
-    this.activated = true;
+    this.isActive = true;
+    this.animate();
+    this.applyGravity();
+
+    setTimeout(() => {
+      this.attack();
+    }, 4000);
   }
 
   animate() {
     setStoppableInterval(() => {
-      if (!this.isDead() && this.activated) {
+      if (!this.isDead() && this.isActive && !this.isAttacking && this.frameCount > 8) {
         this.moveLeft();
       }
     }, 1000 / 60);
@@ -80,9 +85,37 @@ class Endboss extends MovableObject {
         this.playAnimation(this.IMAGES_DEAD);
       } else if (this.isHurt()) {
         this.playAnimation(this.IMAGES_HURT);
+      } else if (this.isAttacking) {
+        this.playAnimation(this.IMAGES_ATTACK);
+      } else if (this.frameCount < 8) {
+        this.playAnimation(this.IMAGES_ALERT);
       } else {
         this.playAnimation(this.IMAGES_WALKING);
       }
-    }, 100);
+
+      this.frameCount++;
+    }, 250);
+  }
+
+  hit(damage) {
+    super.hit(damage);
+    gameSounds.sfx.endbossHurt.play();
+    world.statusBarEndboss.setPercentage(this.health);
+  }
+
+  attack() {
+    this.isAttacking = true;
+    setTimeout(() => {
+      this.pushBack(20);
+    }, 1000);
+
+    setTimeout(() => {
+      this.isAttacking = false;
+      setTimeout(() => {
+        if (!this.isDead()) {
+          this.attack();
+        }
+      }, 2000);
+    }, 2000);
   }
 }
