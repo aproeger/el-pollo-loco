@@ -61,12 +61,14 @@ class Endboss extends MovableObject {
     this.loadImages(this.IMAGES_DEAD);
 
     addSound("sfx", "endbossHurt", new Audio("audio/endboss-hurt.mp3"));
+    addSound("sfx", "endbossAlarmed", new Audio("audio/endboss-alarmed.mp3"));
   }
 
   activate() {
     this.isActive = true;
     this.animate();
     this.applyGravity();
+    gameSounds.sfx.endbossAlarmed.play();
 
     setTimeout(() => {
       this.attack();
