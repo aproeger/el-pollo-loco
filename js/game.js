@@ -5,19 +5,43 @@ let gameSounds = { music: {}, sfx: {} };
 
 function init() {
   canvas = document.getElementById("canvas");
-  startGame();
 }
 
-function startGame() {
+function createWorld() {
   world = new World(canvas, keyboard);
 }
 
 function stopGame() {
-  intervalIds.forEach(clearInterval);
+  setTimeout(() => {
+    intervalIds.forEach(clearInterval);
+    muteAllSounds();
+  }, 1000);
 }
 
-function addSound(type, key, audio) {
+function addSound(type, key, audio, volume = 0.8, loop = false) {
   gameSounds[type][key] = audio;
+  gameSounds[type][key].volume = volume;
+  gameSounds[type][key].loop = loop;
+}
+
+function muteSounds(type) {
+  for (const key in gameSounds[type]) {
+    const sound = gameSounds[type][key];
+    sound.volume = 0;
+  }
+}
+
+function muteMusic() {
+  muteSounds("music");
+}
+
+function muteSfx() {
+  muteSounds("sfx");
+}
+
+function muteAllSounds() {
+  muteMusic();
+  muteSfx();
 }
 
 function setStoppableInterval(fn, time) {
@@ -76,3 +100,24 @@ document.addEventListener("keyup", (event) => {
     keyboard.D = false;
   }
 });
+
+function startGame() {
+  hideStartScreen();
+  showCanvas();
+  createWorld();
+}
+
+function hideStartScreen() {
+  let startScreen = document.getElementById("start-screen");
+  startScreen.classList.add("d-none");
+}
+
+function showCanvas() {
+  let canvasWarapper = document.getElementById("canvas-wrapper");
+  canvasWarapper.classList.remove("d-none");
+}
+
+function openLegalDialog() {
+  let dialog = document.getElementById("legal-dialog");
+  dialog.showModal();
+}
