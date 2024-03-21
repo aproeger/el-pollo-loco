@@ -8,7 +8,7 @@ class Endboss extends MovableObject {
   offset = { x: { left: 20, right: 10 }, y: { top: 75, bottom: 15 } };
   isActive = false;
   isAttacking = false;
-  damage = 20;
+  damage = 35;
 
   IMAGES_WALKING = [
     "img/4_enemie_boss_chicken/1_walk/G1.png",
