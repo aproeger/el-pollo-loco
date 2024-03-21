@@ -234,6 +234,20 @@ a:hover {
   }
 }
 
+@media only screen and (max-width: 720px) {
+  #keys {
+    display: none;
+  }
+  canvas,
+  #app {
+    width: 100%;
+    border-radius: 0;
+  }
+  #hud .bottom {
+    display: flex;
+  }
+}
+
 @media only screen and (max-height: 480px) {
   #app {
     height: 100vh;
