@@ -5,7 +5,7 @@ class World {
   cameraX = 0;
   character = new Character(this);
   level = level1;
-  debug = true;
+  debug = false;
 
   statusBarBottles = new StatusBarBottles();
   statusBarHealth = new StatusBarHealth();
@@ -17,9 +17,10 @@ class World {
     this.keyboard = keyboard;
     this.ctx = this.canvas.getContext("2d");
 
-    addSound("music", "background", new Audio("audio/music-background.mp3"));
-    addSound("music", "bossbattle", new Audio("audio/music-bossbattle.mp3"));
+    addSound("music", "background", new Audio("audio/music-background.mp3"), 0.3, true);
+    addSound("music", "bossbattle", new Audio("audio/music-bossbattle.mp3"), 0.3, true);
     addSound("sfx", "bottleSplash", new Audio("audio/bottle-splash.mp3"));
+    addSound("sfx", "punch", new Audio("audio/punch.mp3"));
 
     this.draw();
     this.run();
@@ -32,14 +33,10 @@ class World {
   }
 
   playBackgroundMusic() {
-    gameSounds.music.background.volume = 0.3;
-    gameSounds.music.background.loop = true;
     gameSounds.music.background.play();
   }
 
   playBossbattleMusic() {
-    gameSounds.music.bossbattle.volume = 0.5;
-    gameSounds.music.bossbattle.loop = true;
     gameSounds.music.bossbattle.play();
   }
 
@@ -83,10 +80,9 @@ class World {
           ) {
             enemy.hit(this.character.damage);
             this.character.jump(15);
-          } else if (this.character.isColliding(enemy)) {
+            gameSounds.sfx.punch.play();
+          } else if (this.character.isColliding(enemy) && !this.character.isHurt()) {
             this.character.hit(enemy.damage, true);
-            gameSounds.sfx.hurt.play();
-            this.statusBarHealth.setPercentage(this.character.health);
           }
 
           if (this.level.throwableObjects.length) {
@@ -99,11 +95,6 @@ class World {
                   throwableObject.splash();
                   enemy.hit(20);
                   throwableObject.removeFromLevel(this.level, index);
-
-                  if (enemy instanceof Endboss) {
-                    this.statusBarEndboss.setPercentage(enemy.health);
-                    gameSounds.sfx.endbossHurt.play();
-                  }
                 }
               }
             });
@@ -143,7 +134,9 @@ class World {
     this.addToMap(this.statusBarCoins);
     this.addToMap(this.statusBarHealth);
     this.addToMap(this.statusBarBottles);
-    this.addToMap(this.statusBarEndboss);
+    if (this.level.discoveredEndboss) {
+      this.addToMap(this.statusBarEndboss);
+    }
     this.ctx.translate(this.cameraX, 0);
 
     this.addObjectsToMap(this.level.enemies);
