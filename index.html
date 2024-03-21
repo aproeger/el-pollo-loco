@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="css/style.css" />
     <title>El Pollo Loco</title>
-    <script src="classes/world.class.js"></script>
     <script src="classes/keyboard.class.js"></script>
+    <script src="classes/world.class.js"></script>
     <script src="js/game.js"></script>
     <script src="classes/drawable-object.class.js"></script>
     <script src="classes/collectable-object.class.js"></script>
@@ -30,8 +30,59 @@
     <script src="levels/level1.js"></script>
   </head>
   <body onload="init()">
-    <h1>El Pollo Loco</h1>
+    <dialog id="legal-dialog">
+      <h2>Legal Notice</h2>
+      <p>
+        The following information is required under german law, according to the Telemedia Act
+        (TMG): In accordance with Section 5.1 of the Telemedia Act.
+      </p>
+      <h3>Angaben gemäß § 5 TMG</h3>
+      <p>
+        <div>Axel Pröger</div>
+        <div><a href="mailto:mail@axelproeger.de">mail@axelproeger.de</a></div>
+      </p>
+      <h2>Privacy</h2>
+      <p>I take your privacy very seriously. <strong>No cookies, third party tracking or telemetry is used.</strong></p>
+    </dialog>
 
-    <canvas id="canvas" width="720" height="480"></canvas>
+    <div id="app">
+      <div id="start-screen">
+        <button class="btn" onclick="startGame()">START GAME</button>
+      </div>
+      <div id="canvas-wrapper" class="d-none">
+        <canvas id="canvas" width="720" height="480"></canvas>
+      </div>
+    </div>
+    <div id="keys" class="flex justify-content-between">
+      <div>
+        <div class="flex gap-1 align-items-center">
+          <img class="key" src="img/keys/arrow-left.png" alt="Key Arrow Back" />
+          <div>Move left</div>
+        </div>
+      </div>
+      <div>
+        <div class="flex gap-1 align-items-center">
+          <img class="key" src="img/keys/arrow-right.png" alt="Key Arrow Back" />
+          <div>Move right</div>
+        </div>
+      </div>
+      <div>
+        <div class="flex gap-1 align-items-center">
+          <img class="key" src="img/keys/space.png" alt="Key Arrow Back" />
+          <div>Jump</div>
+        </div>
+      </div>
+      <div>
+        <div class="flex gap-1 align-items-center">
+          <img class="key" src="img/keys/letter-d.png" alt="Key Arrow Back" />
+          <div>Throw Tabasco</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Developed in 2024 by Axel Pröger &bull;
+      <a href="#" onclick="openLegalDialog(); return false;">Legal Notice / Privacy</a>
+    </footer>
   </body>
 </html>
