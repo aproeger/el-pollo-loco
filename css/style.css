@@ -1,0 +1,133 @@
+@import url(reset.css);
+
+@font-face {
+  font-family: "Zabars";
+  src: url("../fonts/zabars.woff") format("woff");
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-image: url(../img/background.webp);
+  background-size: cover;
+  font-family: "Zabars";
+  color: white;
+  font-size: 16px;
+}
+
+canvas {
+  border-radius: 15px;
+  height: 100%;
+  width: 100%;
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  font-family: sans-serif;
+  font-size: 0.875rem;
+  padding: 0.5rem;
+}
+
+dialog {
+  border: solid #a43d18 0.125rem;
+  font-family: sans-serif;
+  border-radius: 1.5rem;
+  background-color: #fed784;
+}
+
+a {
+  cursor: pointer;
+  color: #ffc32b;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #ffffff;
+  text-decoration: underline;
+}
+
+#app {
+  position: relative;
+  width: 720px;
+  height: 480px;
+  flex-shrink: 0;
+}
+
+#canvas-wrapper,
+#start-screen {
+  border-radius: 15px;
+}
+
+#start-screen {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  background-image: url(../img/9_intro_outro_screens/start/startscreen_1.png);
+  background-size: 100% 100%;
+  background-position: center;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 2rem 0;
+}
+
+#keys {
+  width: 720px;
+  margin-top: 1rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.075rem;
+}
+
+.key {
+  height: 48px;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.flex {
+  display: flex;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.justify-content-between {
+  justify-content: space-between;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.btn {
+  cursor: pointer;
+  background: #ffc32b;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 198, 33, 1) 0%,
+    rgba(255, 220, 0, 1) 50%,
+    rgba(255, 160, 0, 1) 100%
+  );
+  border-radius: 0.5rem;
+  color: #000;
+  font-size: 2rem;
+  font-family: inherit;
+  padding: 0.25rem 3rem;
+  border: solid #a43d18 0.125rem;
+  text-decoration: none;
+}
+
+.btn:hover {
+  filter: brightness(90%);
+}
