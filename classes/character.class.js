@@ -96,13 +96,12 @@ class Character extends MovableObject {
   }
 
   animate() {
-    // 60 fps
     setStoppableInterval(() => {
       gameSounds.sfx.walking.pause();
       gameSounds.sfx.snoring.pause();
 
       if (this.isSleeping()) {
-        // gameSounds.sfx.snoring.play();
+        gameSounds.sfx.snoring.play();
       }
 
       if (this.world.keyboard.LEFT && this.x > 0 && !this.isHurt()) {
@@ -133,7 +132,6 @@ class Character extends MovableObject {
       this.world.cameraX = -this.x + 100;
     }, 1000 / 60);
 
-    // 10 fps
     setStoppableInterval(() => {
       if (this.isDead()) {
         this.playAnimation(this.IMAGES_DEAD);
@@ -160,16 +158,24 @@ class Character extends MovableObject {
     }, 1000 / 10);
   }
 
+  hit(damage, pushback = false) {
+    super.hit(damage, pushback);
+    gameSounds.sfx.hurt.play();
+    this.world.statusBarHealth.setPercentage(this.health);
+  }
+
   collectCoin() {
     this.coins += 1;
     this.world.statusBarCoins.setPercentage(this.coins * 20);
     gameSounds.sfx.collectCoin.play();
+    this.lastAction = new Date().getTime();
   }
 
   collectBottle() {
     this.bottles += 1;
     this.world.statusBarBottles.setPercentage(this.bottles * 20);
     gameSounds.sfx.collectBottle.play();
+    this.lastAction = new Date().getTime();
   }
 
   throwBottle() {
@@ -181,6 +187,7 @@ class Character extends MovableObject {
       this.lastThrow = currentTime;
       this.bottles -= 1;
       this.world.statusBarBottles.setPercentage(this.bottles * 20);
+      this.lastAction = new Date().getTime();
     }
   }
 }
