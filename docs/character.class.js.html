@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: character.class.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: character.class.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Represents the main character in the game.
+ * @extends MovableObject
+ */
+class Character extends MovableObject {
+  /** Reference to the game world.
+   * @type {World}
+   */
+  world;
+
+  /** The width of the character.
+   * @type {number}
+   */
+  width = 140;
+
+  /** The height of the character.
+   * @type {number}
+   */
+  height = 275;
+
+  /** The initial x-coordinate of the character.
+   * @type {number}
+   */
+  x = 100;
+
+  /** The initial y-coordinate of the character.
+   * @type {number}
+   */
+  y = 160;
+
+  /** The movement speed of the character.
+   * @type {number}
+   */
+  speed = 5;
+
+  /** The number of coins collected by the character.
+   * @type {number}
+   */
+  coins = 0;
+
+  /** The number of bottles collected by the character.
+   * @type {number}
+   */
+  bottles = 0;
+
+  /** The damage inflicted by the character.
+   * @type {number}
+   */
+  damage = 5;
+
+  /** The timestamp of the last throw action.
+   * @type {number}
+   */
+  lastThrow = 0;
+
+  /**
+   * The offset of the object.
+   * @type {Object}
+   * @property {Object} x - The horizontal offset.
+   * @property {number} x.left - The left offset.
+   * @property {number} x.right - The right offset.
+   * @property {Object} y - The vertical offset.
+   * @property {number} y.top - The top offset.
+   * @property {number} y.bottom - The bottom offset.
+   */
+  offset = { x: { left: 20, right: 20 }, y: { top: 90, bottom: 10 } };
+
+  /** Array of image paths for idle animation.
+   * @type {string[]}
+   */
+  IMAGES_IDLE = [
+    "img/2_character_pepe/1_idle/idle/I-1.png",
+    "img/2_character_pepe/1_idle/idle/I-2.png",
+    "img/2_character_pepe/1_idle/idle/I-3.png",
+    "img/2_character_pepe/1_idle/idle/I-4.png",
+    "img/2_character_pepe/1_idle/idle/I-5.png",
+    "img/2_character_pepe/1_idle/idle/I-6.png",
+    "img/2_character_pepe/1_idle/idle/I-7.png",
+    "img/2_character_pepe/1_idle/idle/I-8.png",
+    "img/2_character_pepe/1_idle/idle/I-9.png",
+    "img/2_character_pepe/1_idle/idle/I-10.png",
+  ];
+
+  /** Array of image paths for long idle animation.
+   * @type {string[]}
+   */
+  IMAGES_LONG_IDLE = [
+    "img/2_character_pepe/1_idle/long_idle/I-11.png",
+    "img/2_character_pepe/1_idle/long_idle/I-12.png",
+    "img/2_character_pepe/1_idle/long_idle/I-13.png",
+    "img/2_character_pepe/1_idle/long_idle/I-14.png",
+    "img/2_character_pepe/1_idle/long_idle/I-15.png",
+    "img/2_character_pepe/1_idle/long_idle/I-16.png",
+    "img/2_character_pepe/1_idle/long_idle/I-17.png",
+    "img/2_character_pepe/1_idle/long_idle/I-18.png",
+    "img/2_character_pepe/1_idle/long_idle/I-19.png",
+    "img/2_character_pepe/1_idle/long_idle/I-20.png",
+  ];
+
+  /** Array of image paths for walk animation.
+   * @type {string[]}
+   */
+  IMAGES_WALK = [
+    "img/2_character_pepe/2_walk/W-21.png",
+    "img/2_character_pepe/2_walk/W-22.png",
+    "img/2_character_pepe/2_walk/W-23.png",
+    "img/2_character_pepe/2_walk/W-24.png",
+    "img/2_character_pepe/2_walk/W-25.png",
+    "img/2_character_pepe/2_walk/W-26.png",
+  ];
+
+  /** Array of image paths for jump animation.
+   * @type {string[]}
+   */
+  IMAGES_JUMP = [
+    "img/2_character_pepe/3_jump/J-33.png",
+    "img/2_character_pepe/3_jump/J-34.png",
+    "img/2_character_pepe/3_jump/J-35.png",
+    "img/2_character_pepe/3_jump/J-36.png",
+    "img/2_character_pepe/3_jump/J-37.png",
+    "img/2_character_pepe/3_jump/J-38.png",
+    "img/2_character_pepe/3_jump/J-39.png",
+  ];
+
+  /** Array of image paths for hurt animation.
+   * @type {string[]}
+   */
+  IMAGES_HURT = [
+    "img/2_character_pepe/4_hurt/H-41.png",
+    "img/2_character_pepe/4_hurt/H-42.png",
+    "img/2_character_pepe/4_hurt/H-43.png",
+  ];
+
+  /** Array of image paths for dead animation.
+   * @type {string[]}
+   */
+  IMAGES_DEAD = [
+    "img/2_character_pepe/5_dead/D-51.png",
+    "img/2_character_pepe/5_dead/D-52.png",
+    "img/2_character_pepe/5_dead/D-53.png",
+    "img/2_character_pepe/5_dead/D-54.png",
+    "img/2_character_pepe/5_dead/D-55.png",
+    "img/2_character_pepe/5_dead/D-56.png",
+    "img/2_character_pepe/5_dead/D-57.png",
+  ];
+
+  /**
+   * Creates a new Character object.
+   * @param {World} world - The game world.
+   */
+  constructor(world) {
+    super();
+    this.loadImages();
+    this.addsounds();
+    this.applyGravity();
+    this.animate();
+    this.world = world;
+  }
+
+  /**
+   * Loads all character images.
+   */
+  loadImages() {
+    super.loadImage(this.IMAGES_IDLE[0]);
+    super.loadImages(this.IMAGES_IDLE);
+    super.loadImages(this.IMAGES_LONG_IDLE);
+    super.loadImages(this.IMAGES_WALK);
+    super.loadImages(this.IMAGES_JUMP);
+    super.loadImages(this.IMAGES_HURT);
+    super.loadImages(this.IMAGES_DEAD);
+  }
+
+  /**
+   * Adds sounds for character actions.
+   */
+  addsounds() {
+    addSound("sfx", "walking", new Audio("audio/walking.mp3"));
+    addSound("sfx", "jumping", new Audio("audio/jumping.mp3"));
+    addSound("sfx", "hurt", new Audio("audio/hurt.mp3"));
+    addSound("sfx", "collectCoin", new Audio("audio/collect-coin.mp3"));
+    addSound("sfx", "collectBottle", new Audio("audio/collect-bottle.mp3"));
+    addSound("sfx", "snoring", new Audio("audio/snoring.mp3"));
+  }
+
+  /**
+   * Animates the character.
+   */
+  animate() {
+    this.checkStatus();
+    this.playAnimations();
+  }
+
+  /**
+   * Checks the status of the character and performs actions accordingly.
+   */
+  checkStatus() {
+    setStoppableInterval(() => {
+      gameSounds.sfx.walking.pause();
+      gameSounds.sfx.snoring.pause();
+      if (this.isSleeping()) gameSounds.sfx.snoring.play();
+      if (this.canMoveLeft()) this.moveLeft();
+      if (this.canMoveRight()) this.moveRight();
+      if (this.canJump()) this.jump();
+      if (this.canThrowBottle()) this.throwBottle();
+      this.world.cameraX = -this.x + 100;
+    }, 1000 / 60);
+  }
+
+  /**
+   * Plays character animations based on its state.
+   */
+  playAnimations() {
+    setStoppableInterval(() => {
+      if (this.isDead()) this.playAnimation(this.IMAGES_DEAD);
+      else if (this.isHurt()) this.playAnimation(this.IMAGES_HURT);
+      else if (this.isAboveGround()) this.playJumpAnimation();
+      else if (this.canMoveLeft() || this.canMoveRight()) this.playAnimation(this.IMAGES_WALK);
+      else if (this.isSleeping()) this.playAnimation(this.IMAGES_LONG_IDLE);
+      else this.playAnimation(this.IMAGES_IDLE);
+    }, 1000 / 10);
+  }
+
+  /**
+   * Plays jump animation for the character.
+   */
+  playJumpAnimation() {
+    if (this.jumpFrameCount &lt; 3) {
+      this.playAnimation(this.IMAGES_JUMP.slice(0, 3));
+      this.jumpFrameCount++;
+    } else if (this.jumpFrameCount >= 3) {
+      this.playAnimation([this.IMAGES_JUMP[3]]);
+      this.jumpFrameCount++;
+    }
+  }
+
+  /**
+   * Checks if the character can move left.
+   * @returns {boolean} - True if the character can move left, false otherwise.
+   */
+  canMoveLeft() {
+    return this.world.keyboard.LEFT &amp;&amp; this.x > 0 &amp;&amp; !this.isHurt();
+  }
+
+  /**
+   * Moves the character to the left.
+   */
+  moveLeft() {
+    super.moveLeft();
+    this.flipped = true;
+    if (!this.isAboveGround()) gameSounds.sfx.walking.play();
+  }
+
+  /**
+   * Checks if the character can move right.
+   * @returns {boolean} - True if the character can move right, false otherwise.
+   */
+  canMoveRight() {
+    return this.world.keyboard.RIGHT &amp;&amp; this.x &lt; this.world.level.levelEndX &amp;&amp; !this.isHurt();
+  }
+
+  /**
+   * Moves the character to the right.
+   */
+  moveRight() {
+    super.moveRight();
+    this.flipped = false;
+    if (!this.isAboveGround()) gameSounds.sfx.walking.play();
+  }
+
+  /**
+   * Checks if the character can jump.
+   * @returns {boolean} - True if the character can jump, false otherwise.
+   */
+  canJump() {
+    return this.world.keyboard.SPACE &amp;&amp; !this.isAboveGround();
+  }
+
+  /**
+   * Makes the character jump.
+   * @param {number} power - the jump power.
+   */
+  jump(power) {
+    super.jump(power);
+    gameSounds.sfx.jumping.play();
+  }
+
+  /**
+   * Inflicts damage on the character.
+   * @param {number} damage - The amount of damage to inflict.
+   * @param {boolean} pushback - Whether to push the character back.
+   */
+  hit(damage, pushback = false) {
+    super.hit(damage, pushback);
+    gameSounds.sfx.hurt.play();
+    this.world.statusBarHealth.setPercentage(this.health);
+  }
+
+  /**
+   * Collects a coin.
+   */
+  collectCoin() {
+    this.coins += 1;
+    this.world.statusBarCoins.setPercentage(this.coins * 20);
+    gameSounds.sfx.collectCoin.play();
+    this.lastAction = new Date().getTime();
+  }
+
+  /**
+   * Collects a bottle.
+   */
+  collectBottle() {
+    this.bottles += 1;
+    this.world.statusBarBottles.setPercentage(this.bottles * 20);
+    gameSounds.sfx.collectBottle.play();
+    this.lastAction = new Date().getTime();
+  }
+
+  /**
+   * Checks if the character can throw a bottle.
+   * @returns {boolean} - True if the character can throw a bottle, false otherwise.
+   */
+  canThrowBottle() {
+    return this.world.keyboard.D &amp;&amp; !this.isDead() &amp;&amp; !this.isHurt();
+  }
+
+  /**
+   * Throws a bottle.
+   */
+  throwBottle() {
+    let currentTime = new Date().getTime();
+    let timePassed = currentTime - this.lastThrow;
+
+    if (this.bottles > 0 &amp;&amp; timePassed > 1250) {
+      this.world.level.throwableObjects.push(new Bottle(this.x, this.y, this.flipped));
+      this.lastThrow = currentTime;
+      this.bottles -= 1;
+      this.world.statusBarBottles.setPercentage(this.bottles * 20);
+      this.lastAction = new Date().getTime();
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BackgroundObject.html">BackgroundObject</a></li><li><a href="Bottle.html">Bottle</a></li><li><a href="BottleOnGround.html">BottleOnGround</a></li><li><a href="Character.html">Character</a></li><li><a href="Chicken.html">Chicken</a></li><li><a href="Cloud.html">Cloud</a></li><li><a href="Coin.html">Coin</a></li><li><a href="CollectableObject.html">CollectableObject</a></li><li><a href="DrawableObject.html">DrawableObject</a></li><li><a href="Endboss.html">Endboss</a></li><li><a href="Keyboard.html">Keyboard</a></li><li><a href="Level.html">Level</a></li><li><a href="MovableObject.html">MovableObject</a></li><li><a href="SmallChicken.html">SmallChicken</a></li><li><a href="StatusBarBottles.html">StatusBarBottles</a></li><li><a href="StatusBarCoins.html">StatusBarCoins</a></li><li><a href="StatusBarEndboss.html">StatusBarEndboss</a></li><li><a href="StatusBarHealth.html">StatusBarHealth</a></li><li><a href="StatusBarObject.html">StatusBarObject</a></li><li><a href="ThrowableObject.html">ThrowableObject</a></li><li><a href="World.html">World</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.2</a> on Fri Mar 22 2024 00:36:33 GMT+0100 (Mitteleuropäische Normalzeit)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
