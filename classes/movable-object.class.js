@@ -4,7 +4,7 @@ class MovableObject extends DrawableObject {
   acceleration = 2.5;
   health = 100;
   lastHit = 0;
-  lastMove;
+  lastAction;
   jumpPower = 30;
   jumpFrameCount = 0;
   frameCount = 0;
@@ -29,12 +29,12 @@ class MovableObject extends DrawableObject {
 
   moveLeft() {
     this.x -= this.speed;
-    this.lastMove = new Date().getTime();
+    this.lastAction = new Date().getTime();
   }
 
   moveRight() {
     this.x += this.speed;
-    this.lastMove = new Date().getTime();
+    this.lastAction = new Date().getTime();
   }
 
   jump(jumpPower) {
@@ -42,7 +42,7 @@ class MovableObject extends DrawableObject {
 
     this.speedY = jumpPower;
     this.jumpFrameCount = 0;
-    this.lastMove = new Date().getTime();
+    this.lastAction = new Date().getTime();
   }
 
   hit(damage, pushback = false) {
@@ -52,18 +52,23 @@ class MovableObject extends DrawableObject {
       this.health = 0;
     } else {
       this.lastHit = new Date().getTime();
-      this.lastMove = new Date().getTime();
+      this.lastAction = new Date().getTime();
     }
   }
 
-  pushBack() {
-    this.speedY = 15;
+  pushBack(power = null) {
+    if (power) {
+      this.speedY = power;
+    } else {
+      this.speedY = 15;
+    }
+
     let interval = setInterval(() => {
       this.x -= 6;
     }, 1000 / 60);
     setTimeout(() => {
       clearInterval(interval);
-    }, 200);
+    }, 400);
   }
 
   isHurt() {
