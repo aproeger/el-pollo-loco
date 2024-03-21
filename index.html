@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/style.css" />
     <title>El Pollo Loco</title>
+    <link rel="icon" href="img/favicon.png" />
     <script src="classes/keyboard.class.js"></script>
     <script src="classes/world.class.js"></script>
     <script src="js/game.js"></script>
@@ -37,46 +38,95 @@
         (TMG): In accordance with Section 5.1 of the Telemedia Act.
       </p>
       <h3>Angaben gemäß § 5 TMG</h3>
-      <p>
-        <div>Axel Pröger</div>
-        <div><a href="mailto:mail@axelproeger.de">mail@axelproeger.de</a></div>
-      </p>
+
+      <div>Axel Pröger</div>
+      <div><a href="mailto:mail@axelproeger.de">mail@axelproeger.de</a></div>
+
       <h2>Privacy</h2>
-      <p>I take your privacy very seriously. <strong>No cookies, third party tracking or telemetry is used.</strong></p>
+      <p>
+        I take your privacy very seriously.
+        <strong>No cookies, third party tracking or telemetry is used.</strong>
+      </p>
+
+      <button class="btn" onclick="closeLegalDialog()">Close Window</button>
     </dialog>
 
     <div id="app">
-      <div id="start-screen">
-        <button class="btn" onclick="startGame()">START GAME</button>
-      </div>
-      <div id="canvas-wrapper" class="d-none">
+      <div id="canvas-wrapper">
         <canvas id="canvas" width="720" height="480"></canvas>
       </div>
-    </div>
-    <div id="keys" class="flex justify-content-between">
-      <div>
-        <div class="flex gap-1 align-items-center">
-          <img class="key" src="img/keys/arrow-left.png" alt="Key Arrow Back" />
-          <div>Move left</div>
+      <div id="hud">
+        <div class="top">
+          <img
+            id="button-hud-sound"
+            src="img/keys/sound-on.png"
+            class="key"
+            onclick="toggleMute()"
+          />
+          <img src="img/keys/fullscreen.png" class="key" onclick="toggleFullscreen()" />
+        </div>
+        <div id="mobile-controls" class="bottom">
+          <div class="left">
+            <img id="mobile-move-left" src="img/keys/arrow-left.png" class="key" />
+            <img id="mobile-move-right" src="img/keys/arrow-right.png" class="key" />
+          </div>
+          <div class="right">
+            <img id="mobile-jump" src="img/keys/jump.png" class="key" />
+            <img id="mobile-throw" src="img/keys/throw.png" class="key" />
+          </div>
         </div>
       </div>
-      <div>
-        <div class="flex gap-1 align-items-center">
-          <img class="key" src="img/keys/arrow-right.png" alt="Key Arrow Back" />
-          <div>Move right</div>
+
+      <div id="start-screen" class="game-screen start">
+        <div class="top">
+          <button class="btn" onclick="startGame()">START GAME</button>
+          <button class="btn" onclick="toggleStory()">STORY</button>
+        </div>
+
+        <div id="game-story" class="story d-none">
+          Help Pepe, a courageous Mexican villager, to defend his village. Gather resources and fend
+          off the feathery invaders. The ultimate challenge awaits at the end: a showdown with the
+          formidable Boss Chicken.
         </div>
       </div>
-      <div>
-        <div class="flex gap-1 align-items-center">
-          <img class="key" src="img/keys/space.png" alt="Key Arrow Back" />
-          <div>Jump</div>
+      <div id="win-screen" class="game-screen win d-none">
+        <div>Victory!</div>
+        <button class="btn" onclick="restartGame()">RESTART</button>
+      </div>
+      <div id="lose-screen" class="game-screen lose d-none">
+        <div>Defeat!</div>
+        <button class="btn" onclick="restartGame()">RETRY</button>
+      </div>
+
+      <div id="keys" class="flex justify-content-between">
+        <div>
+          <div class="flex gap-1 align-items-center">
+            <img class="key" src="img/keys/arrow-left.png" alt="Key Arrow Back" />
+            <div>Move left</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex gap-1 align-items-center">
+            <img class="key" src="img/keys/arrow-right.png" alt="Key Arrow Back" />
+            <div>Move right</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex gap-1 align-items-center">
+            <img class="key" src="img/keys/space.png" alt="Key Arrow Back" />
+            <div>Jump</div>
+          </div>
+        </div>
+        <div>
+          <div class="flex gap-1 align-items-center">
+            <img class="key" src="img/keys/letter-d.png" alt="Key Arrow Back" />
+            <div>Throw Tabasco</div>
+          </div>
         </div>
       </div>
-      <div>
-        <div class="flex gap-1 align-items-center">
-          <img class="key" src="img/keys/letter-d.png" alt="Key Arrow Back" />
-          <div>Throw Tabasco</div>
-        </div>
+
+      <div id="rotate-phone" class="d-none">
+        <img src="img/rotate-phone.gif" alt="" />
       </div>
     </div>
 
