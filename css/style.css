@@ -1,12 +1,17 @@
-@import url(reset.css);
-
 @font-face {
   font-family: "Zabars";
   src: url("../fonts/zabars.woff") format("woff");
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
-  height: 100vh;
+  margin: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,20 +21,23 @@ body {
   font-family: "Zabars";
   color: white;
   font-size: 16px;
+  min-height: 100vh;
 }
 
 canvas {
   border-radius: 15px;
-  height: 100%;
-  width: 100%;
+  position: relative;
 }
 
 footer {
   position: fixed;
   bottom: 0;
+  left: 0;
+  right: 0;
   font-family: sans-serif;
-  font-size: 0.875rem;
-  padding: 0.5rem;
+  font-size: 12px;
+  padding: 1rem;
+  text-align: center;
 }
 
 dialog {
@@ -37,6 +45,18 @@ dialog {
   font-family: sans-serif;
   border-radius: 1.5rem;
   background-color: #fed784;
+}
+
+dialog button.btn {
+  font-size: inherit;
+}
+
+dialog a {
+  color: #000;
+}
+
+dialog a:hover {
+  color: #666;
 }
 
 a {
@@ -50,29 +70,102 @@ a:hover {
   text-decoration: underline;
 }
 
+#rotate-phone {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #232323;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 #app {
   position: relative;
-  width: 720px;
   height: 480px;
-  flex-shrink: 0;
 }
 
-#canvas-wrapper,
-#start-screen {
-  border-radius: 15px;
-}
-
-#start-screen {
+#canvas-wrapper {
   height: 100%;
   width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+#hud {
   position: absolute;
-  background-image: url(../img/9_intro_outro_screens/start/startscreen_1.png);
+  top: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+#hud img {
+  cursor: pointer;
+}
+
+#hud .top,
+#hud .bottom .left,
+#hud .bottom .right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+#hud .bottom {
+  display: none;
+  justify-content: space-between;
+}
+
+.game-screen {
+  position: absolute;
+  top: 0;
+  border-radius: 15px;
+  height: 100%;
+  width: 100%;
   background-size: 100% 100%;
   background-position: center;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 2rem 0;
+  padding: 1.5rem;
+  font-size: 2rem;
+  letter-spacing: 0.075rem;
+}
+
+.game-screen.start {
+  background-image: url("../img/9_intro_outro_screens/start/startscreen_1.png");
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  color: #232323;
+  gap: 1rem;
+}
+
+.game-screen.start .story {
+  border: solid #a43d18 0.125rem;
+  padding: 1rem;
+  border-radius: 1.5rem;
+  background-color: #fed784;
+}
+
+.game-screen.win {
+  background-image: url("../img/9_intro_outro_screens/game_over/game over.png");
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+}
+
+.game-screen.lose {
+  background-image: url("../img/9_intro_outro_screens/game_over/oh no you lost!.png");
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
 }
 
 #keys {
@@ -130,4 +223,32 @@ a:hover {
 
 .btn:hover {
   filter: brightness(90%);
+}
+
+@media only screen and (max-width: 1000px) {
+  #keys {
+    display: none;
+  }
+  #hud .bottom {
+    display: flex;
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  #app {
+    height: 100vh;
+  }
+  canvas {
+    height: 100%;
+    border-radius: 0;
+  }
+}
+
+@media only screen and (max-height: 580px) {
+  footer {
+    display: none;
+  }
+  #hud {
+    padding: 0.5rem;
+  }
 }
