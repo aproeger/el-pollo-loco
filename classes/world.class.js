@@ -21,6 +21,8 @@ class World {
     addSound("music", "bossbattle", new Audio("audio/music-bossbattle.mp3"), 0.3, true);
     addSound("sfx", "bottleSplash", new Audio("audio/bottle-splash.mp3"));
     addSound("sfx", "punch", new Audio("audio/punch.mp3"));
+    addSound("sfx", "victory", new Audio("audio/victory.mp3"));
+    addSound("sfx", "failure", new Audio("audio/failure.mp3"));
 
     this.draw();
     this.run();
@@ -59,13 +61,13 @@ class World {
       if (this.level.discoveredEndboss) {
         this.level.enemies.forEach((enemy) => {
           if (enemy instanceof Endboss && enemy.isDead()) {
-            stopGame();
+            winGame();
           }
         });
       }
 
       if (this.character.isDead()) {
-        stopGame();
+        loseGame();
       }
     }, 50);
   }
