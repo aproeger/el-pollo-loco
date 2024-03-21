@@ -33,7 +33,7 @@ class SmallChicken extends MovableObject {
 
     setStoppableInterval(() => {
       if (!this.isDead()) {
-        this.jump();
+        this.jump(15 + Math.random() * 15);
       }
     }, 1000 + Math.random() * 2000);
 
