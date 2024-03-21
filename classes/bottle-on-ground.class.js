@@ -14,7 +14,8 @@ class BottleOnGround extends CollectableObject {
   width = 100;
 
   /**
-   * @type {Object} The offset of the object.
+   * The offset of the object.
+   * @type {Object}
    * @property {Object} x - The horizontal offset.
    * @property {number} x.left - The left offset.
    * @property {number} x.right - The right offset.
@@ -24,7 +25,9 @@ class BottleOnGround extends CollectableObject {
    */
   offset = { x: { left: 20, right: 20 }, y: { top: 10, bottom: 10 } };
 
-  /** @type {string[]} The images representing the bottle on the ground. */
+  /** The images representing the bottle on the ground.
+   * @type {string[]}
+   */
   IMAGE = [
     "img/6_salsa_bottle/1_salsa_bottle_on_ground.png",
     "img/6_salsa_bottle/2_salsa_bottle_on_ground.png",

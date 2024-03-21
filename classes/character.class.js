@@ -3,38 +3,59 @@
  * @extends MovableObject
  */
 class Character extends MovableObject {
-  /** @type {World} Reference to the game world. */
+  /** Reference to the game world.
+   * @type {World}
+   */
   world;
 
-  /** @type {number} The width of the character. */
+  /** The width of the character.
+   * @type {number}
+   */
   width = 140;
 
-  /** @type {number} The height of the character. */
+  /** The height of the character.
+   * @type {number}
+   */
   height = 275;
 
-  /** @type {number} The initial x-coordinate of the character. */
+  /** The initial x-coordinate of the character.
+   * @type {number}
+   */
   x = 100;
 
-  /** @type {number} The initial y-coordinate of the character. */
+  /** The initial y-coordinate of the character.
+   * @type {number}
+   */
   y = 160;
 
-  /** @type {number} The movement speed of the character. */
+  /** The movement speed of the character.
+   * @type {number}
+   */
   speed = 5;
 
-  /** @type {number} The number of coins collected by the character. */
+  /** The number of coins collected by the character.
+   * @type {number}
+   */
   coins = 0;
 
-  /** @type {number} The number of bottles collected by the character. */
+  /** The number of bottles collected by the character.
+   * @type {number}
+   */
   bottles = 0;
 
-  /** @type {number} The damage inflicted by the character. */
+  /** The damage inflicted by the character.
+   * @type {number}
+   */
   damage = 5;
 
-  /** @type {number} The timestamp of the last throw action. */
+  /** The timestamp of the last throw action.
+   * @type {number}
+   */
   lastThrow = 0;
 
   /**
-   * @type {Object} The offset of the object.
+   * The offset of the object.
+   * @type {Object}
    * @property {Object} x - The horizontal offset.
    * @property {number} x.left - The left offset.
    * @property {number} x.right - The right offset.

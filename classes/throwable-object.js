@@ -4,12 +4,14 @@
  */
 class ThrowableObject extends MovableObject {
   /**
-   * @type {boolean} Indicates whether the object has splashed.
+   * Indicates whether the object has splashed.
+   * @type {boolean}
    */
   splashed = false;
 
   /**
-   * @type {string} The direction in which the object is thrown.
+   * The direction in which the object is thrown.
+   * @type {string}
    */
   throwDirection = "right";
 

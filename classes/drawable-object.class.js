@@ -48,7 +48,8 @@ class DrawableObject {
   currentImage = 0;
 
   /**
-   * @type {Object} The offset of the object.
+   * The offset of the object.
+   * @type {Object}
    * @property {Object} x - The horizontal offset.
    * @property {number} x.left - The left offset.
    * @property {number} x.right - The right offset.

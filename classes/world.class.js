@@ -3,57 +3,68 @@
  */
 class World {
   /**
-   * @type {HTMLCanvasElement} The canvas element for rendering the game.
+   * The canvas element for rendering the game.
+   *  @type {HTMLCanvasElement}
    */
   canvas;
 
   /**
-   * @type {CanvasRenderingContext2D} The rendering context of the canvas.
+   * The rendering context of the canvas.
+   * @type {CanvasRenderingContext2D}
    */
   ctx;
 
   /**
-   * @type {Keyboard} The keyboard object for handling user input.
+   * The keyboard object for handling user input.
+   * @type {Keyboard}
    */
   keyboard;
 
   /**
-   * @type {number} The camera position along the x-axis.
+   * The camera position along the x-axis.
+   * @type {number}
    */
   cameraX = 0;
 
   /**
-   * @type {Character} The character object representing the player.
+   * The character object representing the player.
+   * @type {Character}
    */
   character = new Character(this);
 
   /**
-   * @type {Level} The current level of the game.
+   * The current level of the game.
+   * @type {Level}
    */
   level = level1;
 
   /**
-   * @type {boolean} Indicates whether debug mode is enabled.
+   * Indicates whether debug mode is enabled.
+   * @type {boolean}
    */
   debug = false;
 
   /**
-   * @type {StatusBarBottles} The status bar for bottles.
+   * The status bar for bottles.
+   * @type {StatusBarBottles}
    */
   statusBarBottles = new StatusBarBottles();
 
   /**
-   * @type {StatusBarHealth} The status bar for health.
+   * The status bar for health.
+   * @type {StatusBarHealth}
    */
   statusBarHealth = new StatusBarHealth();
 
   /**
-   * @type {StatusBarCoins} The status bar for coins.
+   * The status bar for coins.
+   * @type {StatusBarCoins}
    */
   statusBarCoins = new StatusBarCoins();
 
   /**
-   * @type {StatusBarEndboss} The status bar for the end boss.
+   * The status bar for the end boss.
+   * @type {StatusBarEndboss}
    */
   statusBarEndboss = new StatusBarEndboss();
 
